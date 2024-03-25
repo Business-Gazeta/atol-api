@@ -1,11 +1,11 @@
 <?php
 
-namespace BusinessGazeta\AtolApi\Response\Auth;
+namespace BusinessGazeta\AtolApi\Response\Sell;
 
 
 use BusinessGazeta\AtolApi\Response\AtolResponseInterface;
 
-class AuthResponse implements AtolResponseInterface
+class SellResponse implements AtolResponseInterface
 {
     public function parseData(string $result): array
     {
@@ -13,6 +13,6 @@ class AuthResponse implements AtolResponseInterface
         if ($data['error']) {
             throw new \Exception($data['error']['text']);
         }
-        return ['token' => $data['token']];
+        return ['uuid' => $data['uuid']];
     }
 }

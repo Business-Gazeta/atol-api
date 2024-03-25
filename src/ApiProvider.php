@@ -4,13 +4,14 @@ namespace BusinessGazeta\AtolApi;
 
 use BusinessGazeta\AtolApi\Request\AtolRequestInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 
 class ApiProvider
 {
     private Client $client;
 
-//    private const URL = 'https://online.atol.ru/possystem/v4';
-    private const URL = 'https://testonline.atol.ru/possystem/v4';
+//    private const URL = 'https://online.atol.ru/possystem/v4/';
+    private const URL = 'https://testonline.atol.ru/possystem/v4/';
 
     private array $headers;
 
@@ -47,8 +48,8 @@ class ApiProvider
     public function auth(AtolRequestInterface $request): void
     {
         try {
-            $result = $this->client->post(self::URL . '/getToken', $request->params())->getBody()->getContents();
-            $data = $request->getResponse()->parseData(json_decode($result, true));
+            $result = $this->client->post(self::URL . 'getToken', $request->params())->getBody()->getContents();
+            $data = $request->getResponse()->parseData($result);
             $this->setToken($data['token']);
         } catch (\Exception $exception) {
             var_dump($exception->getMessage());
@@ -56,30 +57,22 @@ class ApiProvider
         }
     }
 
-//    public function addHeader(string $key, string $value): self
-//    {
-//        $this->headers[$key] = $value;
-//        return $this;
-//    }
-
     final public function execute(
         AtolRequestInterface $request
     ) {
         $params = $request->params();
-//        $params = ['json' => []];
-        print_R(json_encode($params));
-//        var_dump($this->client);
-//        die();
         try {
             $result =  $this->client->request(
                 'POST',
                 self::URL . $request->uri(),
                 $params
             )->getBody()->getContents();
-        } catch (\Exception $exception) {
-            var_dump($exception->getMessage());
-            die();
+            return $request->getResponse()->parseData($result);
+        } catch (BadResponseException $exception) {
+            throw new \Exception($exception->getResponse()->getBody()->getContents());
         }
-        return $result;
+//        var_dump($result);
+//        die();
+
     }
 }
