@@ -4,15 +4,15 @@ namespace BusinessGazeta\AtolApi\Object\Sell;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
-use PaymentMethodEnum;
-use PaymentObjectEnum;
+use BusinessGazeta\AtolApi\Enum\Sell\PaymentMethodEnum;
+use BusinessGazeta\AtolApi\Enum\Sell\PaymentObjectEnum;
 
 class Item extends AbstractObject implements JsonSerializable
 {
     private string $name;
-    private string $price;
-    private string $quantity;
-    private string $sum;
+    private float $price;
+    private float $quantity;
+    private float $sum;
     private ?string $measurementUnit = null;
     private ?string $nomenclatureCode = null;
     private ?PaymentMethodEnum $paymentMethod = null;
@@ -21,7 +21,7 @@ class Item extends AbstractObject implements JsonSerializable
     private ?AgentInfo $agentInfo = null;
     private ?SupplierInfoFull $supplierInfo = null;
     private ?string $userData = null;
-    private ?int $excise = null;
+    private ?float $excise = null;
     private ?string $countryCode = null;
     private ?string $declarationNumber = null;
 
@@ -67,49 +67,49 @@ class Item extends AbstractObject implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getPrice(): string
+    public function getPrice(): float
     {
-        return $this->price;
+        return (float)number_format($this->price,2);
     }
 
     /**
-     * @param string $price
+     * @param float $price
      */
-    public function setPrice(string $price): void
+    public function setPrice(float $price): void
     {
         $this->price = $price;
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getQuantity(): string
+    public function getQuantity(): float
     {
-        return $this->quantity;
+        return (float)number_format($this->quantity, 3);
     }
 
     /**
-     * @param string $quantity
+     * @param float $quantity
      */
-    public function setQuantity(string $quantity): void
+    public function setQuantity(float $quantity): void
     {
         $this->quantity = $quantity;
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getSum(): string
+    public function getSum(): float
     {
-        return $this->sum;
+        return (float)number_format($this->sum, 2);
     }
 
     /**
-     * @param string $sum
+     * @param float $sum
      */
-    public function setSum(string $sum): void
+    public function setSum(float $sum): void
     {
         $this->sum = $sum;
     }
@@ -243,17 +243,17 @@ class Item extends AbstractObject implements JsonSerializable
     }
 
     /**
-     * @return int|null
+     * @return float|null
      */
-    public function getExcise(): ?int
+    public function getExcise(): ?float
     {
-        return $this->excise;
+        return (float)number_format($this->excise, 2);
     }
 
     /**
-     * @param int|null $excise
+     * @param float|null $excise
      */
-    public function setExcise(?int $excise): void
+    public function setExcise(?float $excise): void
     {
         $this->excise = $excise;
     }

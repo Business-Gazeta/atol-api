@@ -2,7 +2,6 @@
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
-use AgentInfoTypeEnum;
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
 

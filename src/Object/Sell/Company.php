@@ -3,7 +3,7 @@
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
-use CompanySnoEnum;
+use BusinessGazeta\AtolApi\Enum\Sell\CompanySnoEnum;
 use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 

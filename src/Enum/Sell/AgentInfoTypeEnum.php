@@ -1,5 +1,6 @@
 <?php
 
+namespace BusinessGazeta\AtolApi\Enum\Sell;
 
 enum AgentInfoTypeEnum: string
 {

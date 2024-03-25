@@ -1,6 +1,6 @@
 <?php
 
-
+namespace BusinessGazeta\AtolApi\Enum\Sell;
 enum    PaymentMethodEnum: string
 {
 //Если признак не

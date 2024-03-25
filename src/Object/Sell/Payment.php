@@ -4,14 +4,14 @@ namespace BusinessGazeta\AtolApi\Object\Sell;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
-use PaymentTypeEnum;
-use VatTypeEnum;
+use BusinessGazeta\AtolApi\Enum\Sell\PaymentTypeEnum;
+use BusinessGazeta\AtolApi\Enum\Sell\VatTypeEnum;
 
 
 class Payment extends AbstractObject implements JsonSerializable
 {
     private PaymentTypeEnum $type;
-    private string $sum;
+    private float $sum;
 
 
     public function jsonSerialize()
@@ -40,17 +40,17 @@ class Payment extends AbstractObject implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getSum(): string
+    public function getSum(): float
     {
-        return $this->sum;
+        return (float)number_format($this->sum, 2);
     }
 
     /**
-     * @param string $sum
+     * @param float $sum
      */
-    public function setSum(string $sum): void
+    public function setSum(float $sum): void
     {
         $this->sum = $sum;
     }

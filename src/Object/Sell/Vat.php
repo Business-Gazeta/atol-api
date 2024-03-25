@@ -4,13 +4,13 @@ namespace BusinessGazeta\AtolApi\Object\Sell;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
-use VatTypeEnum;
+use BusinessGazeta\AtolApi\Enum\Sell\VatTypeEnum;
 
 
 class Vat extends AbstractObject implements JsonSerializable
 {
     private VatTypeEnum $type;
-    private ?string $sum = null;
+    private ?float $sum = null;
 
     /**
      * @return VatTypeEnum
@@ -23,25 +23,27 @@ class Vat extends AbstractObject implements JsonSerializable
     /**
      * @param VatTypeEnum $type
      */
-    public function setType(VatTypeEnum $type): void
+    public function setType(VatTypeEnum $type): Vat
     {
         $this->type = $type;
+        return $this;
     }
 
     /**
-     * @return string|null
+     * @return float|null
      */
-    public function getSum(): ?string
+    public function getSum(): ?float
     {
-        return $this->sum;
+        return (float)number_format($this->sum, 2);
     }
 
     /**
-     * @param string|null $sum
+     * @param float|null $sum
      */
-    public function setSum(?string $sum): void
+    public function setSum(?float $sum): Vat
     {
         $this->sum = $sum;
+        return $this;
     }
 
 
