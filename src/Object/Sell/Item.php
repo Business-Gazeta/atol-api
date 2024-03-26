@@ -6,23 +6,70 @@ use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
 use BusinessGazeta\AtolApi\Enum\Sell\PaymentMethodEnum;
 use BusinessGazeta\AtolApi\Enum\Sell\PaymentObjectEnum;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Item extends AbstractObject implements JsonSerializable
 {
+    #[Assert\Length(
+        max: 128,
+        maxMessage: 'Длина строки не может быть больше чем {{ limit }} символов',
+    )]
     private string $name;
+    #[Assert\Expression(
+        "value === null || this.isCorrectFloat(value, 42949673)",
+        message: 'Максимальное значение цены – 42 949 672.95 и 2 знака после запятой',
+    )]
     private float $price;
+    #[Assert\Expression(
+        "value === null || this.isCorrectFloat(value, 99999.999, 3)",
+        message: 'Максимальное значение – 99 999.999 и 3 знака после запятой',
+    )]
     private float $quantity;
+    #[Assert\Expression(
+        "value === null || this.isCorrectFloat(value, 42949673)",
+        message: 'Максимальное значение цены – 42 949 672.95 и 2 знака после запятой',
+    )]
     private float $sum;
+    #[Assert\Length(
+        max: 16,
+        maxMessage: 'Максимальная длина строки – 16 символов.',
+    )]
     private ?string $measurementUnit = null;
+    #[Assert\Regex("^([a-fA-F0-9]{2}$)|(^([a-fA-F0-9]{2}\\s){1,31}[a-fA-F0-9]{2}|01(?<gtin>\\d{14})21(?<serial>[a-zA-Z0-9!\" % &'()*+\\/\\-.,:;=<>?_]{13})([a-zA-Z0-
+9!\" % &'()*+\\/\\-.,:;=<>?_]{1,119})?|(?<gtin>\\d{14})(?<serial>[a-zA-Z0-9!\" %&'()*+\\/\\-.,:;=<>?_]{11})[a-zA-Z0-9!\" %&'()*+\\/\\-.,:;=<>?_]{4})$")]
+    #[Assert\Length(
+        max: 150,
+        maxMessage: 'Максимальная длина – 150 символов.',
+    )]
     private ?string $nomenclatureCode = null;
     private ?PaymentMethodEnum $paymentMethod = null;
     private ?PaymentObjectEnum $paymentObject = null;
+    #[Assert\Valid]
     private Vat $vat;
     private ?AgentInfo $agentInfo = null;
     private ?SupplierInfoFull $supplierInfo = null;
+    #[Assert\Length(
+        max: 64,
+        maxMessage: 'Максимальная длина строки – 64 символа.',
+    )]
     private ?string $userData = null;
+    #[Assert\PositiveOrZero]
+    #[Assert\Expression(
+        "value === null || this.isCorrectFloat(value, 100000000)",
+        message: 'Максимальное значение цены – 999999999.99, и 2 знака после запятой',
+    )]
     private ?float $excise = null;
+    #[Assert\Length(
+        min: 3,
+        max: 3,
+        minMessage: 'Если переданный код страны происхождения имеет длину меньше 3 цифр, то он дополняется справа пробелами',
+        maxMessage: 'Код страны происхождения имеет длину ровно 3 цифры',
+    )]
     private ?string $countryCode = null;
+    #[Assert\Length(
+        max: 32,
+        maxMessage: 'Максимум 32 символа',
+    )]
     private ?string $declarationNumber = null;
 
 
@@ -288,6 +335,12 @@ class Item extends AbstractObject implements JsonSerializable
     public function setDeclarationNumber(?string $declarationNumber): void
     {
         $this->declarationNumber = $declarationNumber;
+    }
+
+    public function isCorrectFloat(float $k, int $max, int $decimals = 2): bool
+    {
+        $parts = explode('.', $k);
+        return (int)$k <= $max && (!isset($parts[1]) || strlen($parts[1]) < $decimals + 1);
     }
 
 }

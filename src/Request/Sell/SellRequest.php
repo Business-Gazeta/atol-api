@@ -10,10 +10,10 @@ class SellRequest extends AbstractAtolRequest
 {
     private $query;
 
-    public function __construct(SellQuery $sellQuery, SellResponse $response, string $groupCode)
+    public function __construct(SellQuery $sellQuery, string $groupCode)
     {
         $this->query = $sellQuery;
-        $this->setResponse($response);
+        $this->setResponse(new SellResponse());
         $this->setUri($groupCode . '/sell');
     }
     public function params(): array

@@ -5,11 +5,21 @@ namespace BusinessGazeta\AtolApi\Query\Sell;
 use BusinessGazeta\AtolApi\Object\Sell\Receipt;
 use BusinessGazeta\AtolApi\Object\Sell\Service;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
+
 class SellQuery implements JsonSerializable
 {
     private string $timestamp;
+    #[Assert\Length(
+        min: 0,
+        max: 128,
+        minMessage: 'Строка должна сотоят хотябы из одного сивола',
+        maxMessage: 'Длина строки не может быть больше чем {{ limit }} символов',
+    )]
     private string $externalId;
+    #[Assert\Valid]
     private ?Service $service = null;
+    #[Assert\Valid]
     private Receipt $receipt;
 
     public function jsonSerialize()

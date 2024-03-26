@@ -4,14 +4,31 @@ namespace BusinessGazeta\AtolApi\Object\Sell;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 
 class MoneyTransferOperator extends AbstractObject implements JsonSerializable
 {
+    #[Assert\All([
+        new Assert\Length(max: 19)
+    ])]
     private ?array $phones = null;
+    #[Assert\Length(
+        max: 64,
+        maxMessage: 'Длина строки не может быть больше чем {{ limit }} символов',
+    )]
     private ?string $name = null;
+    #[Assert\Length(
+        max: 256,
+        maxMessage: 'Адресс может быть больше чем {{ limit }} символов',
+    )]
     private ?string $address = null;
+    #[Assert\Type(type: ['digit'])]
+    #[Assert\Expression(
+        "value === NULL or this.isCorrectLength(value, 12) or this.isCorrectLength(value, 10)",
+        message: 'Допустимые значения длины инн: 10, 12',
+    )]
     private ?string $inn = null;
 
     /**
@@ -88,5 +105,9 @@ class MoneyTransferOperator extends AbstractObject implements JsonSerializable
 
 
         return $params;
+    }
+    public function isCorrectLength(string $string, int $need):bool
+    {
+        return strlen($string) === $need;
     }
 }

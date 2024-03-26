@@ -4,12 +4,15 @@ namespace BusinessGazeta\AtolApi\Object\Sell;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 
 class SupplierInfo extends AbstractObject implements JsonSerializable
 {
-
+    #[Assert\All([
+        new Assert\Length(max: 19)
+    ])]
     private ?array $phones = null;
 
     /**

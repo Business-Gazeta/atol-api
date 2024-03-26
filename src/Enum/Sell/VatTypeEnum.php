@@ -28,9 +28,9 @@ enum   VatTypeEnum: string
     case NONE = 'none';
     case VAT_0 = 'vat0';
     case VAT_10 = 'vat10';
-    case VAT_18 = 'vat18';
+//    case VAT_18 = 'vat18';
     case VAT_110 = 'vat110';
-    case VAT_118 = 'vat118';
+//    case VAT_118 = 'vat118';
     case VAT_20 = 'vat20';
     case VAT_120 = 'vat120';
 

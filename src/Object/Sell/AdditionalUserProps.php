@@ -4,12 +4,21 @@ namespace BusinessGazeta\AtolApi\Object\Sell;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 
 class AdditionalUserProps extends AbstractObject implements JsonSerializable
 {
+    #[Assert\Length(
+        max: 64,
+        maxMessage: 'Максимальная длина имени – 64 символа.',
+    )]
     private string $name;
+    #[Assert\Length(
+        max: 256,
+        maxMessage: 'Платежный адресс может быть больше чем {{ limit }} символов',
+    )]
     private string $value;
 
     public function jsonSerialize()

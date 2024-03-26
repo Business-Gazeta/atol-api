@@ -5,14 +5,18 @@ namespace BusinessGazeta\AtolApi\Object\Sell;
 use BusinessGazeta\AtolApi\Enum\Sell\AgentInfoTypeEnum;
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 
 class AgentInfo extends AbstractObject implements JsonSerializable
 {
     private AgentInfoTypeEnum $type;
+    #[Assert\Valid]
     private ?PayingAgent $payingAgent = null;
+    #[Assert\Valid]
     private ?ReceivePaymentsOperator $receivePaymentsOperator = null;
+    #[Assert\Valid]
     private ?MoneyTransferOperator $moneyTransferOperator = null;
 
     public function jsonSerialize()

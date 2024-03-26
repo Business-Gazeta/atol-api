@@ -9,26 +9,70 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Receipt extends AbstractObject implements JsonSerializable
 {
 
+    #[Assert\Valid]
     private Client $client;
+    #[Assert\Valid]
     private Company $company;
+    #[Assert\Valid]
     private ?AgentInfo $agentInfo = null;
+    #[Assert\Valid]
     private ?SupplierInfo $supplierInfo = null;
+    #[Assert\Count(
+        min: 1,
+        max: 100,
+        minMessage: 'Ограничение по количеству от 1 до 100',
+        maxMessage: 'Ограничение по количеству от 1 до 100',
+    )]
+    #[Assert\Valid]
     /**
      * @var Item []
      */
     private array $items;
+    #[Assert\Count(
+        min: 1,
+        max: 10,
+        minMessage: 'Ограничение по количеству от 1 до 10',
+        maxMessage: 'Ограничение по количеству от 1 до 10',
+    )]
+    #[Assert\Valid]
     /**
      * @var Payment []
      */
     private array $payments;
+    #[Assert\Count(
+        min: 1,
+        max: 6,
+        minMessage: 'Ограничение по количеству от 1 до 6',
+        maxMessage: 'Ограничение по количеству от 1 до 6',
+    )]
+    #[Assert\Valid]
     /**
      * @var Vat []
      */
     private ?array $vats = null;
+    #[Assert\Expression(
+        "value === null || this.isCorrectFloat(value, 100000000)",
+        message: 'Максимальное значение цены – 999999999.99, и 2 знака после запятой',
+    )]
     private float $total;
+    #[Assert\Length(
+        max: 16,
+        maxMessage: 'Максимальная длина строки – 16 символов.',
+    )]
     private ?string $additionalCheckProps = null;
+    #[Assert\Length(
+        max: 64,
+        maxMessage: 'Максимальная длина строки – 64 символов.',
+    )]
     private ?string $cashier = null;
+    #[Assert\Valid]
     private ?AdditionalUserProps $additionalUserProps = null;
+    #[Assert\Length(
+        min: 1,
+        max: 20,
+        minMessage: 'Локация не может быть меньше чем {{ limit }} символов',
+        maxMessage: 'Локация не может быть больше чем {{ limit }} символов',
+    )]
     private ?string $deviceNumber = null;
 
     public function jsonSerialize()
@@ -177,8 +221,7 @@ class Receipt extends AbstractObject implements JsonSerializable
      */
     public function setTotal(float $total): void
     {
-        print_r($total);
-        $this->total = sprintf('%05.2f', $total);
+        $this->total = $total;
     }
 
     /**
@@ -244,6 +287,10 @@ class Receipt extends AbstractObject implements JsonSerializable
     {
         $this->deviceNumber = $deviceNumber;
     }
-
+    public function isCorrectFloat(float $k, int $max, int $decimals = 2): bool
+    {
+        $parts = explode('.', $k);
+        return (int)$k <= $max && (!isset($parts[1]) || strlen($parts[1]) < $decimals + 1);
+    }
 
 }

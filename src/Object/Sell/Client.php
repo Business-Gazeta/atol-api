@@ -7,14 +7,36 @@ use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Assert\Expression(
-    "this.getEmail() | this.getPhone()",
+    "this.getEmail() != null | this.getPhone() != null",
     message: 'В запросе обязательно должно быть заполнено хотя бы одно из полей: email или phone.'
 )]
 class Client extends AbstractObject implements JsonSerializable
 {
+    #[Assert\Email(
+        message: 'Не корректный емайл',
+    )]
+    #[Assert\Length(
+        max: 64,
+        maxMessage: 'Длина строки не может быть больше чем {{ limit }} символов',
+    )]
     private ?string $email = null;
+    #[Assert\Length(
+        min: 10,
+        max: 64,
+        minMessage: 'Номер телефона не может быть меньше чем {{ limit }} символов',
+        maxMessage: 'Номер телефона не может быть больше чем {{ limit }} символов',
+    )]
     private ?string $phone = null;
+    #[Assert\Length(
+        max: 256,
+        maxMessage: 'Имя не может быть больше чем {{ limit }} символов',
+    )]
     private ?string $name = null;
+    #[Assert\Type(type: ['digit'])]
+    #[Assert\Expression(
+        "value === NULL or this.isCorrectLength(value, 12) or this.isCorrectLength(value, 10)",
+        message: 'Допустимые значения длины инн: 10, 12',
+    )]
     private ?string $inn = null;
 
     /**
@@ -89,5 +111,10 @@ class Client extends AbstractObject implements JsonSerializable
         $params = $this->mergeParams($params, $this->getInn(), 'inn');
 
         return $params;
+    }
+
+    public function isCorrectLength(string $string, int $need):bool
+    {
+        return strlen($string) === $need;
     }
 }
