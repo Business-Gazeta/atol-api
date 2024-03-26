@@ -3,7 +3,6 @@
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
-use BusinessGazeta\AtolApi\Enum\Sell\CompanySnoEnum;
 use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -170,7 +169,6 @@ class Receipt extends AbstractObject implements JsonSerializable
      */
     public function getTotal(): float
     {
-        return $this->total;
         return (float)number_format($this->total, 2);
     }
 

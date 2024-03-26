@@ -2,6 +2,7 @@
 
 namespace BusinessGazeta\AtolApi;
 
+use BusinessGazeta\AtolApi\Object\Response\Auth;
 use BusinessGazeta\AtolApi\Request\AtolRequestInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
@@ -45,16 +46,23 @@ class ApiProvider
         );
     }
 
-    public function auth(AtolRequestInterface $request): void
+    public function auth(AtolRequestInterface $request): Auth
     {
         try {
             $result = $this->client->post(self::URL . 'getToken', $request->params())->getBody()->getContents();
             $data = $request->getResponse()->parseData($result);
-            $this->setToken($data['token']);
+            if (!$data->getError()) {
+                $this->setToken($data->getBasic());
+            } else {
+                throw new \Exception($data->getError()->getText());
+            }
+        } catch (BadResponseException $exception) {
+            throw new \Exception($exception->getResponse()->getBody()->getContents());
         } catch (\Exception $exception) {
-            var_dump($exception->getMessage());
-//            throw new \Exception($exception->getMessage());
+            throw new \Exception($exception->getMessage());
         }
+
+        return $data;
     }
 
     final public function execute(

@@ -5,7 +5,6 @@ namespace BusinessGazeta\AtolApi\Object\Sell;
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
 use BusinessGazeta\AtolApi\Enum\Sell\PaymentTypeEnum;
-use BusinessGazeta\AtolApi\Enum\Sell\VatTypeEnum;
 
 
 class Payment extends AbstractObject implements JsonSerializable

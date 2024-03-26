@@ -8,12 +8,12 @@ use BusinessGazeta\AtolApi\Response\Auth\AuthResponse;
 
 class AuthRequest extends AbstractAtolRequest
 {
-    private $query;
+    private AuthQuery $query;
 
-    public function __construct(AuthQuery $authQuery, AuthResponse $response)
+    public function __construct(AuthQuery $authQuery)
     {
         $this->query = $authQuery;
-        $this->setResponse($response);
+        $this->setResponse(new AuthResponse());
         $this->setUri('getToken');
     }
     public function params(): array

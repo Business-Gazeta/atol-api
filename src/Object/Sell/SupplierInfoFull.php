@@ -2,10 +2,6 @@
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
-use BusinessGazeta\AtolApi\Object\AbstractObject;
-use JsonSerializable;
-
-
 
 class SupplierInfoFull extends SupplierInfo
 {
