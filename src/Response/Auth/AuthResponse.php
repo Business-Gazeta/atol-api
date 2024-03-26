@@ -3,7 +3,6 @@
 namespace BusinessGazeta\AtolApi\Response\Auth;
 
 
-use BusinessGazeta\AtolApi\Object\Response\AbstractResponseObject;
 use BusinessGazeta\AtolApi\Object\Response\Auth;
 use BusinessGazeta\AtolApi\Object\Response\Error;
 use BusinessGazeta\AtolApi\Response\AtolResponseInterface;

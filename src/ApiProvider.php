@@ -2,7 +2,7 @@
 
 namespace BusinessGazeta\AtolApi;
 
-use BusinessGazeta\AtolApi\Object\Response\Auth;
+use BusinessGazeta\AtolApi\Object\Response\AtolResponseObjectInterface;
 use BusinessGazeta\AtolApi\Request\AtolRequestInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
@@ -46,7 +46,7 @@ class ApiProvider
         );
     }
 
-    public function auth(AtolRequestInterface $request): Auth
+    public function auth(AtolRequestInterface $request): AtolResponseObjectInterface
     {
         try {
             $result = $this->client->post(self::URL . 'getToken', $request->params())->getBody()->getContents();
@@ -65,9 +65,7 @@ class ApiProvider
         return $data;
     }
 
-    final public function execute(
-        AtolRequestInterface $request
-    ) {
+    final public function execute(AtolRequestInterface $request): AtolResponseObjectInterface {
         $params = $request->params();
         try {
             $result =  $this->client->request(
