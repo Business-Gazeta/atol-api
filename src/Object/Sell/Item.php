@@ -2,10 +2,10 @@
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
-use BusinessGazeta\AtolApi\Object\AbstractObject;
-use JsonSerializable;
 use BusinessGazeta\AtolApi\Enum\Sell\PaymentMethodEnum;
 use BusinessGazeta\AtolApi\Enum\Sell\PaymentObjectEnum;
+use BusinessGazeta\AtolApi\Object\AbstractObject;
+use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Item extends AbstractObject implements JsonSerializable
@@ -25,11 +25,6 @@ class Item extends AbstractObject implements JsonSerializable
         message: 'Максимальное значение – 99 999.999 и 3 знака после запятой',
     )]
     private float $quantity;
-    #[Assert\Expression(
-        "value === null || this.isCorrectFloat(value, 42949673)",
-        message: 'Максимальное значение цены – 42 949 672.95 и 2 знака после запятой',
-    )]
-    private float $sum;
     #[Assert\Length(
         max: 16,
         maxMessage: 'Максимальная длина строки – 16 символов.',
@@ -73,268 +68,187 @@ class Item extends AbstractObject implements JsonSerializable
     private ?string $declarationNumber = null;
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        $params =
-            [
-                'name' => $this->getName(),
-                'price' => $this->getPrice(),
-                'quantity' => $this->getQuantity(),
-                'sum' => $this->getSum(),
-                'vat' => $this->getVat()->jsonSerialize()
-            ];
-        $params = $this->mergeParams($params, $this->getMeasurementUnit(), 'measurement_unit');
-        $params= $this->mergeParams($params, $this->getPaymentMethod()?->value, 'payment_method');
-        $params= $this->mergeParams($params, $this->getPaymentObject()?->value, 'payment_object');
-        $params= $this->mergeParams($params, $this->getNomenclatureCode(), 'nomenclature_code');
-//        $params= $this->mergeParams($params, $this->getVat()->jsonSerialize(), 'vat');
-        $params= $this->mergeParams($params, $this->getAgentInfo()?->jsonSerialize(), 'agent_info');
-        $params= $this->mergeParams($params, $this->getSupplierInfo()?->jsonSerialize(), 'supplier_info');
-        $params= $this->mergeParams($params, $this->getUserData(), 'user_data');
-        $params= $this->mergeParams($params, $this->getExcise(), 'excise');
-        $params= $this->mergeParams($params, $this->getCountryCode(), 'country_code');
-        $params= $this->mergeParams($params, $this->getDeclarationNumber(), 'declaration_number');
-
-        return $params;
+        return
+            array_filter(
+                [
+                    'name' => $this->getName(),
+                    'price' => $this->getPrice(),
+                    'quantity' => $this->getQuantity(),
+                    'sum' => $this->getSum(),
+                    'vat' => ['type' => $this->getVat()->getType()],
+                    'measurement_unit' => $this->getMeasurementUnit(),
+                    'payment_method' => $this->getPaymentMethod(),
+                    'payment_object' => $this->getPaymentObject(),
+                    'nomenclature_code' => $this->getNomenclatureCode(),
+                    'agent_info' => $this->getAgentInfo(),
+                    'supplier_info' => $this->getSupplierInfo(),
+                    'user_data' => $this->getUserData(),
+                    'excise' => $this->getExcise(),
+                    'country_code' => $this->getCountryCode(),
+                    'declaration_number' => $this->getDeclarationNumber()
+                ]
+            );
     }
-    /**
-     * @return string
-     */
+
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name): void
+    public function setName(string $name): Item
     {
         $this->name = $name;
+        return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getPrice(): float
     {
-        return (float)number_format($this->price,2);
+        return $this->price;
     }
 
-    /**
-     * @param float $price
-     */
-    public function setPrice(float $price): void
+    public function setPrice(float $price): Item
     {
         $this->price = $price;
+        return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getQuantity(): float
     {
-        return (float)number_format($this->quantity, 3);
+        return $this->quantity;
     }
 
-    /**
-     * @param float $quantity
-     */
-    public function setQuantity(float $quantity): void
+    public function setQuantity(float $quantity): Item
     {
         $this->quantity = $quantity;
+        return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getSum(): float
     {
-        return (float)number_format($this->sum, 2);
+        return $this->getPrice() * $this->getQuantity();
     }
 
-    /**
-     * @param float $sum
-     */
-    public function setSum(float $sum): void
-    {
-        $this->sum = $sum;
-    }
-
-    /**
-     * @return string|null
-     */
     public function getMeasurementUnit(): ?string
     {
         return $this->measurementUnit;
     }
 
-    /**
-     * @param string|null $measurementUnit
-     */
-    public function setMeasurementUnit(?string $measurementUnit): void
+    public function setMeasurementUnit(?string $measurementUnit): Item
     {
         $this->measurementUnit = $measurementUnit;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getNomenclatureCode(): ?string
     {
         return $this->nomenclatureCode;
     }
 
-    /**
-     * @param string|null $nomenclatureCode
-     */
-    public function setNomenclatureCode(?string $nomenclatureCode): void
+    public function setNomenclatureCode(?string $nomenclatureCode): Item
     {
         $this->nomenclatureCode = $nomenclatureCode;
+        return $this;
     }
 
-    /**
-     * @return PaymentMethodEnum|null
-     */
     public function getPaymentMethod(): ?PaymentMethodEnum
     {
         return $this->paymentMethod;
     }
 
-    /**
-     * @param PaymentMethodEnum|null $paymentMethod
-     */
-    public function setPaymentMethod(?PaymentMethodEnum $paymentMethod): void
+    public function setPaymentMethod(?PaymentMethodEnum $paymentMethod): Item
     {
         $this->paymentMethod = $paymentMethod;
+        return $this;
     }
 
-    /**
-     * @return PaymentObjectEnum|null
-     */
     public function getPaymentObject(): ?PaymentObjectEnum
     {
         return $this->paymentObject;
     }
 
-    /**
-     * @param PaymentObjectEnum|null $paymentObject
-     */
-    public function setPaymentObject(?PaymentObjectEnum $paymentObject): void
+    public function setPaymentObject(?PaymentObjectEnum $paymentObject): Item
     {
         $this->paymentObject = $paymentObject;
+        return $this;
     }
 
-    /**
-     * @return Vat
-     */
     public function getVat(): Vat
     {
         return $this->vat;
     }
 
-    /**
-     * @param Vat $vat
-     */
-    public function setVat(Vat $vat): void
+    public function setVat(Vat $vat): Item
     {
         $this->vat = $vat;
+        return $this;
     }
 
-    /**
-     * @return AgentInfo|null
-     */
     public function getAgentInfo(): ?AgentInfo
     {
         return $this->agentInfo;
     }
 
-    /**
-     * @param AgentInfo|null $agentInfo
-     */
-    public function setAgentInfo(?AgentInfo $agentInfo): void
+    public function setAgentInfo(?AgentInfo $agentInfo): Item
     {
         $this->agentInfo = $agentInfo;
+        return $this;
     }
 
-    /**
-     * @return SupplierInfoFull|null
-     */
     public function getSupplierInfo(): ?SupplierInfoFull
     {
         return $this->supplierInfo;
     }
 
-    /**
-     * @param SupplierInfoFull|null $supplierInfo
-     */
-    public function setSupplierInfo(?SupplierInfoFull $supplierInfo): void
+    public function setSupplierInfo(?SupplierInfoFull $supplierInfo): Item
     {
         $this->supplierInfo = $supplierInfo;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getUserData(): ?string
     {
         return $this->userData;
     }
 
-    /**
-     * @param string|null $userData
-     */
-    public function setUserData(?string $userData): void
+    public function setUserData(?string $userData): Item
     {
         $this->userData = $userData;
+        return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getExcise(): ?float
     {
-        return (float)number_format($this->excise, 2);
+        return $this->excise;
     }
 
-    /**
-     * @param float|null $excise
-     */
-    public function setExcise(?float $excise): void
+    public function setExcise(?float $excise): Item
     {
         $this->excise = $excise;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCountryCode(): ?string
     {
         return $this->countryCode;
     }
 
-    /**
-     * @param string|null $countryCode
-     */
-    public function setCountryCode(?string $countryCode): void
+    public function setCountryCode(?string $countryCode): Item
     {
         $this->countryCode = $countryCode;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDeclarationNumber(): ?string
     {
         return $this->declarationNumber;
     }
 
-    /**
-     * @param string|null $declarationNumber
-     */
-    public function setDeclarationNumber(?string $declarationNumber): void
+    public function setDeclarationNumber(?string $declarationNumber): Item
     {
         $this->declarationNumber = $declarationNumber;
+        return $this;
     }
 
     public function isCorrectFloat(float $k, int $max, int $decimals = 2): bool
@@ -342,5 +256,4 @@ class Item extends AbstractObject implements JsonSerializable
         $parts = explode('.', $k);
         return (int)$k <= $max && (!isset($parts[1]) || strlen($parts[1]) < $decimals + 1);
     }
-
 }

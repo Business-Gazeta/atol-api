@@ -2,8 +2,8 @@
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
-use BusinessGazeta\AtolApi\Object\AbstractObject;
 use BusinessGazeta\AtolApi\Enum\Sell\CompanySnoEnum;
+use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -25,8 +25,9 @@ class Company extends AbstractObject implements JsonSerializable
     )]
     private string $inn;
     #[Assert\Length(
+        min: 0,
         max: 256,
-        maxMessage: 'Платежный адресс может быть больше чем {{ limit }} символов',
+        maxMessage: 'Платежный адрес может быть больше чем {{ limit }} символов',
     )]
     private string $paymentAddress;
     #[Assert\Length(
@@ -37,103 +38,75 @@ class Company extends AbstractObject implements JsonSerializable
     )]
     private ?string $location = null;
 
-    /**
-     * @return string
-     */
     public function getEmail(): string
     {
         return $this->email;
     }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail(string $email): void
+    public function setEmail(string $email): Company
     {
         $this->email = $email;
+        return $this;
     }
 
-    /**
-     * @return CompanySnoEnum|null
-     */
     public function getSno(): ?CompanySnoEnum
     {
         return $this->sno;
     }
 
-    /**
-     * @param CompanySnoEnum|null $sno
-     */
-    public function setSno(?CompanySnoEnum $sno): void
+    public function setSno(?CompanySnoEnum $sno): Company
     {
         $this->sno = $sno;
+        return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getInn(): string
     {
         return $this->inn;
     }
 
-    /**
-     * @param string $inn
-     */
-    public function setInn(string $inn): void
+    public function setInn(string $inn): Company
     {
         $this->inn = $inn;
+        return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPaymentAddress(): string
     {
         return $this->paymentAddress;
     }
 
-    /**
-     * @param string $paymentAddress
-     */
-    public function setPaymentAddress(string $paymentAddress): void
+    public function setPaymentAddress(string $paymentAddress): Company
     {
         $this->paymentAddress = $paymentAddress;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLocation(): ?string
     {
         return $this->location;
     }
 
-    /**
-     * @param string|null $location
-     */
-    public function setLocation(?string $location): void
+    public function setLocation(?string $location): Company
     {
         $this->location = $location;
+        return $this;
     }
 
-
-
-
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        $params =
+        return array_filter(
             [
                 'email' => $this->getEmail(),
                 'inn' => $this->getInn(),
-                'payment_address' => $this->getPaymentAddress()
-            ];
-        $params = $this->mergeParams($params, $this->sno?->value, 'sno');
-        $params = $this->mergeParams($params, $this->getLocation(), 'location');
-
-        return $params;
+                'payment_address' => $this->getPaymentAddress(),
+                'sno' => $this->getSno()?->value,
+                'location' => $this->getLocation()
+            ]
+        );
     }
-    public function isCorrectLength(string $string, int $need):bool
+
+    public function isCorrectLength(string $string, int $need): bool
     {
         return strlen($string) === $need;
     }

@@ -39,81 +39,63 @@ class Client extends AbstractObject implements JsonSerializable
     )]
     private ?string $inn = null;
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string|null $email
-     */
-    public function setEmail(?string $email): void
+    public function setEmail(?string $email): Client
     {
         $this->email = $email;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPhone(): ?string
     {
         return $this->phone;
     }
 
-    /**
-     * @param string|null $phone
-     */
-    public function setPhone(?string $phone): void
+    public function setPhone(?string $phone): Client
     {
         $this->phone = $phone;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     */
-    public function setName(?string $name): void
+    public function setName(?string $name): Client
     {
         $this->name = $name;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getInn(): ?string
     {
         return $this->inn;
     }
 
-    /**
-     * @param string|null $inn
-     */
-    public function setInn(?string $inn): void
+    public function setInn(?string $inn): Client
     {
         $this->inn = $inn;
+        return $this;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        $params = $this->mergeParams([], $this->getEmail(), 'email');
-        $params= $this->mergeParams($params, $this->getPhone(), 'phone');
-        $params = $this->mergeParams($params, $this->getName(), 'name');
-        $params = $this->mergeParams($params, $this->getInn(), 'inn');
-
-        return $params;
+        return array_filter(
+            [
+                'email' => $this->getEmail(),
+                'phone' => $this->getPhone(),
+                'name' => $this->getName(),
+                'inn' => $this->getInn()
+            ]
+        );
     }
 
-    public function isCorrectLength(string $string, int $need):bool
+    public function isCorrectLength(string $string, int $need): bool
     {
         return strlen($string) === $need;
     }

@@ -2,9 +2,9 @@
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
+use BusinessGazeta\AtolApi\Enum\Sell\PaymentTypeEnum;
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
-use BusinessGazeta\AtolApi\Enum\Sell\PaymentTypeEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -18,45 +18,36 @@ class Payment extends AbstractObject implements JsonSerializable
     private float $sum;
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return
+        return array_filter(
             [
                 'type' => $this->getType()?->value,
                 'sum' => $this->getSum()
-            ];
+            ]
+        );
     }
 
-    /**
-     * @return PaymentTypeEnum
-     */
     public function getType(): PaymentTypeEnum
     {
         return $this->type;
     }
 
-    /**
-     * @param PaymentTypeEnum $type
-     */
-    public function setType(PaymentTypeEnum $type): void
+    public function setType(PaymentTypeEnum $type): Payment
     {
         $this->type = $type;
+        return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getSum(): float
     {
-        return (float)number_format($this->sum, 2);
+        return $this->sum;
     }
 
-    /**
-     * @param float $sum
-     */
-    public function setSum(float $sum): void
+    public function setSum(float $sum): Payment
     {
         $this->sum = $sum;
+        return $this;
     }
 
     public function isCorrectFloat(float $k, int $max, int $decimals = 2): bool

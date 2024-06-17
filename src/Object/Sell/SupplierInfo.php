@@ -7,7 +7,6 @@ use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
-
 class SupplierInfo extends AbstractObject implements JsonSerializable
 {
     #[Assert\All([
@@ -32,8 +31,12 @@ class SupplierInfo extends AbstractObject implements JsonSerializable
     }
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return $this->mergeParams([], $this->getPhones(), 'phones');
+        return array_filter(
+            [
+                'phones' => $this->getPhones()
+            ]
+        );
     }
 }

@@ -4,6 +4,7 @@ namespace BusinessGazeta\AtolApi;
 
 use BusinessGazeta\AtolApi\Object\Response\AtolResponseObjectInterface;
 use BusinessGazeta\AtolApi\Request\AtolRequestInterface;
+use BusinessGazeta\AtolApi\Response\AtolResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 
@@ -11,74 +12,54 @@ class ApiProvider
 {
     private Client $client;
 
-    private const URL = 'https://online.atol.ru/possystem/v4/';
-//    private const URL = 'https://testonline.atol.ru/possystem/v4/';
+    private string $endpointUrl;
+    private array $headers = [
+        'Content-type' => 'application/json',
+        'charset' => 'utf-8',
+    ];
 
-    private array $headers;
-
-    /**
-     * @param string $endpointUrl
-     */
-    public function __construct(string $token = '')
+    public function __construct(string $endpointUrl)
     {
-        $this->headers = [
-            'Content-type' => 'application/json',
-            'charset' => 'utf-8',
-        ];
-        if ($token) {
-            $this->setToken($token);
-        } else {
-            $this->client = new Client(
-                [
-                    'headers' => $this->headers
-                ]
-            );
-        }
-    }
-
-    public function setToken(string $token): void
-    {
-        $this->headers = array_merge($this->headers, ['Token' => $token]);
+        $this->endpointUrl = $endpointUrl;
         $this->client = new Client(
             [
+                'base_uri' => $endpointUrl,
                 'headers' => $this->headers
             ]
         );
     }
 
-    public function auth(AtolRequestInterface $request): AtolResponseObjectInterface
+    public function setToken(string $token): void
     {
-        try {
-            $result = $this->client->post(self::URL . 'getToken', $request->params())->getBody()->getContents();
-            $data = $request->getResponse()->parseData($result);
-            if (!$data->getError()) {
-                $this->setToken($data->getBasic());
-            } else {
-                throw new \Exception($data->getError()->getText());
-            }
-        } catch (BadResponseException $exception) {
-            throw new \Exception($exception->getResponse()->getBody()->getContents());
-        } catch (\Exception $exception) {
-            throw new \Exception($exception->getMessage());
-        }
-
-        return $data;
+        $this->headers['Token'] = $token;
+        $this->client = new Client(
+            [
+                'base_uri' => $this->endpointUrl,
+                'headers' => $this->headers
+            ]
+        );
     }
 
-    final public function execute(AtolRequestInterface $request): AtolResponseObjectInterface {
-        $params = $request->params();
+    final public function execute(AtolRequestInterface $requestObject, string $method = 'POST'): AtolResponseObjectInterface
+    {
         try {
-            $result =  $this->client->request(
-                'POST',
-                self::URL . $request->uri(),
-                $params
+            $result = $this->client->request(
+                $method,
+                $requestObject->uri(),
+                $requestObject->params()
             )->getBody()->getContents();
-            return $request->getResponse()->parseData($result);
+            return $this->getResponse($requestObject, $result);
         } catch (BadResponseException $exception) {
+            print_r($exception->getMessage());
             throw new \Exception($exception->getResponse()->getBody()->getContents());
         }
-//        var_dump($result);
-//        die();
+    }
 
+    public function getResponse(AtolRequestInterface $requestObject, string $response): AtolResponseObjectInterface
+    {
+        $responseObject = $requestObject->getResponseObject();
+        /** @var AtolResponseInterface $obj $obj */
+        $obj = new $responseObject;
+        return $obj->parseData($response);
     }
 }

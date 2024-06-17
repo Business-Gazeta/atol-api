@@ -1,23 +1,23 @@
 <?php
 
-namespace BusinessGazeta\AtolApi\Response\Auth;
+namespace BusinessGazeta\AtolApi\Response\Report;
 
-
-use BusinessGazeta\AtolApi\Object\Response\Auth;
+use BusinessGazeta\AtolApi\Object\Response\AtolResponseObjectInterface;
 use BusinessGazeta\AtolApi\Object\Response\Error;
+use BusinessGazeta\AtolApi\Object\Response\Report;
 use BusinessGazeta\AtolApi\Response\AtolResponseInterface;
 
-class AuthResponse implements AtolResponseInterface
+class ReportResponse implements AtolResponseInterface
 {
-    public function parseData(string $result): Auth
+    public function parseData(string $result): AtolResponseObjectInterface
     {
         try {
-            $data = json_decode($result, true, 2, JSON_THROW_ON_ERROR);
+            $data = json_decode($result, true, 8, JSON_THROW_ON_ERROR);
 
-            $auth = new Auth();
+            $report = new Report();
 
             if (isset($data['error'])) {
-                $auth->setError(
+                $report->setError(
                     new Error(
                         $data['error']['error_id'],
                         $data['error']['code'],
@@ -26,11 +26,11 @@ class AuthResponse implements AtolResponseInterface
                     )
                 );
             } else {
-                $auth->setTimestamp(new \DateTime($data['timestamp']))
-                    ->setToken($data['token']);
+                $report->setTimestamp(new \DateTime($data['timestamp']))
+                    ->setStatus($data['status']);
             }
 
-            return $auth;
+            return $report;
         } catch (\Exception $exception) {
             throw new \Exception(
                 sprintf(

@@ -20,44 +20,35 @@ class PayingAgent extends AbstractObject implements JsonSerializable
     ])]
     private ?array $phones = null;
 
-    /**
-     * @return string|null
-     */
+    public function jsonSerialize(): array
+    {
+        return array_filter(
+            [
+                'operation' => $this->getOperation(),
+                'phones' => $this->getPhones()
+            ]
+        );
+    }
+
     public function getOperation(): ?string
     {
         return $this->operation;
     }
 
-    /**
-     * @param string|null $operation
-     */
-    public function setOperation(?string $operation): void
+    public function setOperation(?string $operation): PayingAgent
     {
         $this->operation = $operation;
+        return $this;
     }
 
-    /**
-     * @return array|null
-     */
     public function getPhones(): ?array
     {
         return $this->phones;
     }
 
-    /**
-     * @param array|null $phones
-     */
-    public function setPhones(?array $phones): void
+    public function setPhones(?array $phones): PayingAgent
     {
         $this->phones = $phones;
-    }
-
-
-    public function jsonSerialize()
-    {
-        $params = $this->mergeParams([], $this->getOperation(), 'operation');
-        $params = $this->mergeParams($params, $this->getPhones(), 'phones');
-
-        return $params;
+        return $this;
     }
 }

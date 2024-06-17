@@ -42,10 +42,4 @@ class Sell extends AbstractResponseObject
         $this->status = $status;
         return $this;
     }
-
-
-    public function getBasic(): string
-    {
-        return $this->uuid;
-    }
 }

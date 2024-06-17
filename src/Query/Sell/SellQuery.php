@@ -4,16 +4,18 @@ namespace BusinessGazeta\AtolApi\Query\Sell;
 
 use BusinessGazeta\AtolApi\Object\Sell\Receipt;
 use BusinessGazeta\AtolApi\Object\Sell\Service;
+use DateTime;
+use DateTimeZone;
 use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SellQuery implements JsonSerializable
 {
-    private string $timestamp;
+    private DateTime $timestamp;
     #[Assert\Length(
         min: 0,
         max: 128,
-        minMessage: 'Строка должна сотоят хотябы из одного сивола',
+        minMessage: 'Строка должна состоять хотя бы из одного символа',
         maxMessage: 'Длина строки не может быть больше чем {{ limit }} символов',
     )]
     private string $externalId;
@@ -22,90 +24,67 @@ class SellQuery implements JsonSerializable
     #[Assert\Valid]
     private Receipt $receipt;
 
-    public function jsonSerialize()
+    public function __construct()
     {
+        $this->timestamp = (new DateTime('now', new DateTimeZone('Europe/Moscow')));
+    }
 
+
+    public function jsonSerialize(): array
+    {
         $params =
             [
-                'timestamp' => $this->getTimestamp(),
+                'timestamp' => $this->getTimestamp()->format('d.m.Y H:i:s'),
                 'external_id' => $this->getExternalId(),
                 'receipt' => $this->getReceipt()
             ];
         if ($this->getService()) {
-            $params = array_merge($params, ['service' => $this->getService()]);
+            $params['service'] = $this->getService();
         }
-        return $params;
+        return array_filter($params);
     }
 
-    /**
-     * @return string
-     */
-    public function getTimestamp(): string
+    public function getTimestamp(): DateTime
     {
         return $this->timestamp;
     }
 
-
-    /**
-     * @param \DateTime|string $timestamp
-     * @return void
-     */
-    public function setTimestamp(\DateTime | string $timestamp): void
+    public function setTimestamp(DateTime $timestamp): SellQuery
     {
-        if (is_string($timestamp)) {
-            $this->timestamp = $timestamp;
-        } else {
-            $this->timestamp = $timestamp->format('m-d-Y H:i:s');
-        }
+        $this->timestamp = $timestamp;
+        return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getExternalId(): string
     {
         return $this->externalId;
     }
 
-    /**
-     * @param string $externalId
-     */
-    public function setExternalId(string $externalId): void
+    public function setExternalId(string $externalId): SellQuery
     {
         $this->externalId = $externalId;
+        return $this;
     }
 
-    /**
-     * @return Service|null
-     */
     public function getService(): ?Service
     {
         return $this->service;
     }
 
-    /**
-     * @param Service|null $service
-     */
-    public function setService(?Service $service): void
+    public function setService(?Service $service): SellQuery
     {
         $this->service = $service;
+        return $this;
     }
 
-    /**
-     * @return Receipt
-     */
     public function getReceipt(): Receipt
     {
         return $this->receipt;
     }
 
-    /**
-     * @param Receipt $receipt
-     */
-    public function setReceipt(Receipt $receipt): void
+    public function setReceipt(Receipt $receipt): SellQuery
     {
         $this->receipt = $receipt;
+        return $this;
     }
-
-
 }

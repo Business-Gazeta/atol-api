@@ -3,6 +3,7 @@
 namespace BusinessGazeta\AtolApi\Enum\Sell;
 enum    PaymentMethodEnum: string
 {
+    use EnumListTrait;
 //Если признак не
 //передан, по
 //умолчанию
@@ -36,12 +37,4 @@ enum    PaymentMethodEnum: string
     case PARTIAL_PAYMENT = 'partial_payment';
     case CREDIT = 'credit';
     case CREDIT_PAYMENT = 'credit_payment';
-
-    public static function list():array {
-        $items = [];
-        foreach (self::cases() as $case) {
-            $items[$case->value] = $case->name;
-        }
-        return $items;
-    }
 }
