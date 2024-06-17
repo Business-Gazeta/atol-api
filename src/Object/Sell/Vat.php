@@ -42,11 +42,12 @@ class Vat extends AbstractObject implements JsonSerializable
      */
     public function getSum(): ?float
     {
-        return (float)number_format($this->sum, 2);
+        return (float)number_format($this->sum, 2, '.', '');
     }
 
     /**
      * @param float|null $sum
+     * @return $this
      */
     public function setSum(?float $sum): Vat
     {

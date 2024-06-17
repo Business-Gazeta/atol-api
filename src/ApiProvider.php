@@ -40,16 +40,17 @@ class ApiProvider
         );
     }
 
-    final public function execute(AtolRequestInterface $requestObject): AtolResponseObjectInterface
+    final public function execute(AtolRequestInterface $requestObject, string $method = 'POST'): AtolResponseObjectInterface
     {
         try {
-            $result = $this->client->post(
+            $result = $this->client->request(
+                $method,
                 $requestObject->uri(),
                 $requestObject->params()
             )->getBody()->getContents();
             return $this->getResponse($requestObject, $result);
         } catch (BadResponseException $exception) {
-            var_dump($exception->getMessage());
+            print_r($exception->getMessage());
             throw new \Exception($exception->getResponse()->getBody()->getContents());
         }
     }
