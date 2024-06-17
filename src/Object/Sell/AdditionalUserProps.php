@@ -17,11 +17,11 @@ class AdditionalUserProps extends AbstractObject implements JsonSerializable
     private string $name;
     #[Assert\Length(
         max: 256,
-        maxMessage: 'Платежный адресс может быть больше чем {{ limit }} символов',
+        maxMessage: 'Платежный адрес может быть больше чем {{ limit }} символов',
     )]
     private string $value;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'name' => $this->getName(),

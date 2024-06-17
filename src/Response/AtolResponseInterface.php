@@ -2,11 +2,10 @@
 
 namespace BusinessGazeta\AtolApi\Response;
 
-
-use BusinessGazeta\AtolApi\Object\Response\AbstractResponseObject;
+use BusinessGazeta\AtolApi\Object\Response\AtolResponseObjectInterface;
 
 interface AtolResponseInterface
 {
-    public function parseData(string $result): AbstractResponseObject;
+    public function parseData(string $result): AtolResponseObjectInterface;
 
 }

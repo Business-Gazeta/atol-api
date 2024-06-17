@@ -18,7 +18,7 @@ class AuthQuery implements JsonSerializable
     }
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'login' => $this->getLogin(),
@@ -35,29 +35,10 @@ class AuthQuery implements JsonSerializable
     }
 
     /**
-     * @param string $login
-     */
-    public function setLogin(string $login): void
-    {
-        $this->login = $login;
-    }
-
-    /**
      * @return string
      */
     public function getPass(): string
     {
         return $this->pass;
     }
-
-    /**
-     * @param string $pass
-     */
-    public function setPass(string $pass): void
-    {
-        $this->pass = $pass;
-    }
-
-
-
 }

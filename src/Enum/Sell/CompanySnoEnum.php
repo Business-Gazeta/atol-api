@@ -3,7 +3,7 @@ namespace BusinessGazeta\AtolApi\Enum\Sell;
 
 enum CompanySnoEnum: string
 {
-
+    use EnumListTrait;
 //Поле необязательно,
 //если у организации
 //один тип
@@ -24,12 +24,4 @@ enum CompanySnoEnum: string
     case ENVD = 'envd';
     case ESN = 'esn';
     case PATENT = 'patent';
-
-    public static function list():array {
-        $items = [];
-        foreach (self::cases() as $case) {
-            $items[$case->value] = $case->name;
-        }
-        return $items;
-    }
 }

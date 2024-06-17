@@ -43,7 +43,7 @@ class SupplierInfoFull extends SupplierInfo
 
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $params = $this->mergeParams([], $this->getPhones(), 'phones');
         $params = $this->mergeParams($params, $this->getName(), 'name');

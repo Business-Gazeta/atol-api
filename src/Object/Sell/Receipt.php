@@ -28,28 +28,6 @@ class Receipt extends AbstractObject implements JsonSerializable
      * @var Item []
      */
     private array $items;
-    #[Assert\Count(
-        min: 1,
-        max: 10,
-        minMessage: 'Ограничение по количеству от 1 до 10',
-        maxMessage: 'Ограничение по количеству от 1 до 10',
-    )]
-    #[Assert\Valid]
-    /**
-     * @var Payment []
-     */
-    private array $payments;
-    #[Assert\Count(
-        min: 1,
-        max: 6,
-        minMessage: 'Ограничение по количеству от 1 до 6',
-        maxMessage: 'Ограничение по количеству от 1 до 6',
-    )]
-    #[Assert\Valid]
-    /**
-     * @var Vat []
-     */
-    private ?array $vats = null;
     #[Assert\Expression(
         "value === null || this.isCorrectFloat(value, 100000000)",
         message: 'Максимальное значение цены – 999999999.99, и 2 знака после запятой',
@@ -75,25 +53,22 @@ class Receipt extends AbstractObject implements JsonSerializable
     )]
     private ?string $deviceNumber = null;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        $params =
-            [
-                'client' => $this->getClient(),
-                'company' => $this->getCompany(),
-                'total' => $this->getTotal(),
-                'items' => $this->getItems(),
-                'payments' => $this->getPayments(),
-            ];
-        $params = $this->mergeParams($params, $this->getAgentInfo(), 'agent_info');
-        $params = $this->mergeParams($params, $this->getSupplierInfo(), 'supplier_info');
-        $params = $this->mergeParams($params, $this->getVats(), 'vats');
-        $params = $this->mergeParams($params, $this->getAdditionalCheckProps(), 'additional_check_props');
-        $params = $this->mergeParams($params, $this->getCashier(), 'cashier');
-        $params = $this->mergeParams($params, $this->getAdditionalUserProps(), 'additional_user_props');
-        $params = $this->mergeParams($params, $this->getDeviceNumber(), 'device_number');
-
-        return $params;
+        return [
+            'client' => $this->getClient(),
+            'company' => $this->getCompany(),
+            'total' => $this->getTotal(),
+            'items' => $this->getItems(),
+            'payments' => $this->getPayments(),
+            'agent_info' => $this->getAgentInfo(),
+            'supplier_info' => $this->getSupplierInfo(),
+            'vats' => $this->getVats(),
+            'additional_check_props' => $this->getAdditionalCheckProps(),
+            'cashier' => $this->getCashier(),
+            'additional_user_props' => $this->getAdditionalUserProps(),
+            'device_number' => $this->getDeviceNumber()
+        ];
     }
 
     /**
@@ -181,7 +156,23 @@ class Receipt extends AbstractObject implements JsonSerializable
      */
     public function getPayments(): array
     {
-        return $this->payments;
+        $payments = [];
+        foreach ($this->items as $item) {
+            $type = $item->getPaymentMethod()->value;
+            $payments[$type]['type'] = $type;
+            $payments[$type]['sum'][] = $item->getSum();
+        }
+        return array_values(
+            array_map(
+                static function ($item) {
+                    return [
+                        'type' => $item['type'],
+                        'sum' => array_sum($item['sum'])
+                    ];
+                },
+                $payments
+            )
+        );
     }
 
     /**
@@ -197,7 +188,24 @@ class Receipt extends AbstractObject implements JsonSerializable
      */
     public function getVats(): ?array
     {
-        return $this->vats;
+        $vats = [];
+        foreach ($this->items as $item) {
+            $vat = $item->getVat();
+            $type = $vat->getType()->value;
+            $vats[$type]['type'] = $type;
+            $vats[$type]['sum'][] = $vat->getSum();
+        }
+        return array_values(
+            array_map(
+                static function ($item) {
+                    return [
+                        'type' => $item['type'],
+                        'sum' => array_sum($item['sum'])
+                    ];
+                },
+                $vats
+            )
+        );
     }
 
     /**
@@ -213,7 +221,14 @@ class Receipt extends AbstractObject implements JsonSerializable
      */
     public function getTotal(): float
     {
-        return (float)number_format($this->total, 2);
+        return array_sum(
+            array_map(
+                static function (Item $item) {
+                    return $item->getSum();
+                },
+                $this->getItems()
+            )
+        );
     }
 
     /**
@@ -287,6 +302,7 @@ class Receipt extends AbstractObject implements JsonSerializable
     {
         $this->deviceNumber = $deviceNumber;
     }
+
     public function isCorrectFloat(float $k, int $max, int $decimals = 2): bool
     {
         $parts = explode('.', $k);

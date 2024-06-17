@@ -23,10 +23,4 @@ class Auth extends AbstractResponseObject
         $this->token = $token;
         return $this;
     }
-
-
-    public function getBasic(): string
-    {
-        return $this->token;
-    }
 }

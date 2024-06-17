@@ -8,5 +8,5 @@ interface AtolRequestInterface
 {
     public function params(): array;
     public function uri(): string;
-    public function getResponse(): AtolResponseInterface;
+    public function getResponseObject(): string;
 }

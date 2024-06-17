@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SellQuery implements JsonSerializable
 {
-    private string $timestamp;
+    private \DateTime $timestamp;
     #[Assert\Length(
         min: 0,
         max: 128,
@@ -22,9 +22,8 @@ class SellQuery implements JsonSerializable
     #[Assert\Valid]
     private Receipt $receipt;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-
         $params =
             [
                 'timestamp' => $this->getTimestamp(),
@@ -32,15 +31,15 @@ class SellQuery implements JsonSerializable
                 'receipt' => $this->getReceipt()
             ];
         if ($this->getService()) {
-            $params = array_merge($params, ['service' => $this->getService()]);
+            $params['service'] = $this->getService();
         }
         return $params;
     }
 
     /**
-     * @return string
+     * @return \DateTime
      */
-    public function getTimestamp(): string
+    public function getTimestamp(): \DateTime
     {
         return $this->timestamp;
     }
@@ -50,12 +49,12 @@ class SellQuery implements JsonSerializable
      * @param \DateTime|string $timestamp
      * @return void
      */
-    public function setTimestamp(\DateTime | string $timestamp): void
+    public function setTimestamp(\DateTime|string $timestamp): void
     {
         if (is_string($timestamp)) {
-            $this->timestamp = $timestamp;
+            $this->timestamp = new \DateTime($timestamp);
         } else {
-            $this->timestamp = $timestamp->format('m-d-Y H:i:s');
+            $this->timestamp = $timestamp;
         }
     }
 

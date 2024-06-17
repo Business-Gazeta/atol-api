@@ -53,7 +53,7 @@ class PayingAgent extends AbstractObject implements JsonSerializable
     }
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $params = $this->mergeParams([], $this->getOperation(), 'operation');
         $params = $this->mergeParams($params, $this->getPhones(), 'phones');

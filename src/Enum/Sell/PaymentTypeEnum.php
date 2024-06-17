@@ -4,6 +4,7 @@ namespace BusinessGazeta\AtolApi\Enum\Sell;
 enum   PaymentTypeEnum: int
 {
 
+    use EnumListTrait;
 //Вид оплаты. Возможные значения:
 //• «0» – наличные;
 //• «1» – безналичный;
@@ -25,12 +26,4 @@ enum   PaymentTypeEnum: int
     case ADVANCED_PAYMENT_7 = 7;
     case ADVANCED_PAYMENT_8 = 8;
     case ADVANCED_PAYMENT_9 = 9;
-
-    public static function list():array {
-        $items = [];
-        foreach (self::cases() as $case) {
-            $items[$case->value] = $case->name;
-        }
-        return $items;
-    }
 }

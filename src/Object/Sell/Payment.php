@@ -18,7 +18,7 @@ class Payment extends AbstractObject implements JsonSerializable
     private float $sum;
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return
             [

@@ -13,9 +13,11 @@ class Service extends AbstractObject implements JsonSerializable
 zA-Z0-9а-яА-Я\-\.\?\,\'\/\\\+&=%\$#_]*)?$")]
     private ?string $callbackUrl = null;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return $this->mergeParams([], $this->getCallbackUrl(), 'callback_url');
+        return [
+            'callback_url' => $this->getCallbackUrl()
+        ];
     }
 
     /**
@@ -33,6 +35,4 @@ zA-Z0-9а-яА-Я\-\.\?\,\'\/\\\+&=%\$#_]*)?$")]
     {
         $this->callbackUrl = $callbackUrl;
     }
-
-
 }

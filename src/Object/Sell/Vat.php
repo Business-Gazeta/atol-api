@@ -8,6 +8,9 @@ use BusinessGazeta\AtolApi\Enum\Sell\VatTypeEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
+/**
+ * @TODO Необходимо сделать расчет суммы налога автоматическим, исходя из налоговой ставки и суммы
+ */
 class Vat extends AbstractObject implements JsonSerializable
 {
     private VatTypeEnum $type;
@@ -52,13 +55,13 @@ class Vat extends AbstractObject implements JsonSerializable
     }
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $params = $this->mergeParams([], $this->getType()?->value, 'type');
         $params = $this->mergeParams($params, $this->getSum(), 'sum');
         return $params;
-
     }
+
     public function isCorrectFloat(float $k, int $max, int $decimals = 2): bool
     {
         $parts = explode('.', $k);

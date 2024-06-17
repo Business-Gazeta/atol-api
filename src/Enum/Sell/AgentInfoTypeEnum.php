@@ -4,6 +4,7 @@ namespace BusinessGazeta\AtolApi\Enum\Sell;
 
 enum AgentInfoTypeEnum: string
 {
+    use EnumListTrait;
 
 //Признак агента (ограничен агентами, введенными в
 //ККТ при фискализации). Возможные значения:
@@ -43,12 +44,4 @@ enum AgentInfoTypeEnum: string
     case ATTORNEY = 'attorney';
     case COMMISSION_AGENT = 'commission_agent';
     case ANOTHER = 'another';
-
-    public static function list():array {
-        $items = [];
-        foreach (self::cases() as $case) {
-            $items[$case->value] = $case->name;
-        }
-        return $items;
-    }
 }

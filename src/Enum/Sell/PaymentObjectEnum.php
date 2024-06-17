@@ -1,8 +1,10 @@
 <?php
 
 namespace BusinessGazeta\AtolApi\Enum\Sell;
+
 enum   PaymentObjectEnum: string
 {
+    use EnumListTrait;
 
 //Признак предмета расчёта:
 //• «commodity» – товар. О реализуемом товаре, за
@@ -131,12 +133,4 @@ enum   PaymentObjectEnum: string
     case MEDICAL_INSURANCE = 'medical_insurance';
     case SOCIAL_INSURANCE = 'social_insurance';
     case CASINO_PAYMENT = 'casino_payment';
-
-    public static function list():array {
-        $items = [];
-        foreach (self::cases() as $case) {
-            $items[$case->value] = $case->name;
-        }
-        return $items;
-    }
 }

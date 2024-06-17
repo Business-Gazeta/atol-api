@@ -13,9 +13,8 @@ class AuthRequest extends AbstractAtolRequest
     public function __construct(AuthQuery $authQuery)
     {
         $this->query = $authQuery;
-        $this->setResponse(new AuthResponse());
-        $this->setUri('getToken');
     }
+
     public function params(): array
     {
         return ['json' => $this->query];
@@ -23,6 +22,11 @@ class AuthRequest extends AbstractAtolRequest
 
     public function uri(): string
     {
-        return $this->getUri();
+        return 'getToken';
+    }
+
+    public function getResponseObject(): string
+    {
+        return AuthResponse::class;
     }
 }
