@@ -34,6 +34,10 @@ class ReceivePaymentsOperator extends AbstractObject implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return $this->mergeParams([], $this->getPhones(), 'phones');
+        return array_filter(
+            [
+                'phones' => $this->getPhones()
+            ]
+        );
     }
 }

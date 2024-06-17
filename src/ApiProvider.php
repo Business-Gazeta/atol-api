@@ -12,6 +12,7 @@ class ApiProvider
 {
     private Client $client;
 
+    private string $endpointUrl;
     private array $headers = [
         'Content-type' => 'application/json',
         'charset' => 'utf-8',
@@ -19,6 +20,7 @@ class ApiProvider
 
     public function __construct(string $endpointUrl)
     {
+        $this->endpointUrl = $endpointUrl;
         $this->client = new Client(
             [
                 'base_uri' => $endpointUrl,
@@ -30,6 +32,12 @@ class ApiProvider
     public function setToken(string $token): void
     {
         $this->headers['Token'] = $token;
+        $this->client = new Client(
+            [
+                'base_uri' => $this->endpointUrl,
+                'headers' => $this->headers
+            ]
+        );
     }
 
     final public function execute(AtolRequestInterface $requestObject): AtolResponseObjectInterface
@@ -41,6 +49,7 @@ class ApiProvider
             )->getBody()->getContents();
             return $this->getResponse($requestObject, $result);
         } catch (BadResponseException $exception) {
+            var_dump($exception->getMessage());
             throw new \Exception($exception->getResponse()->getBody()->getContents());
         }
     }

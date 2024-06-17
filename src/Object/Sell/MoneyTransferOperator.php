@@ -31,80 +31,59 @@ class MoneyTransferOperator extends AbstractObject implements JsonSerializable
     )]
     private ?string $inn = null;
 
-    /**
-     * @return array|null
-     */
     public function getPhones(): ?array
     {
         return $this->phones;
     }
 
-    /**
-     * @param array|null $phones
-     */
-    public function setPhones(?array $phones): void
+    public function setPhones(?array $phones): MoneyTransferOperator
     {
         $this->phones = $phones;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     */
-    public function setName(?string $name): void
+    public function setName(?string $name): MoneyTransferOperator
     {
         $this->name = $name;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAddress(): ?string
     {
         return $this->address;
     }
 
-    /**
-     * @param string|null $address
-     */
-    public function setAddress(?string $address): void
+    public function setAddress(?string $address): MoneyTransferOperator
     {
         $this->address = $address;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getInn(): ?string
     {
         return $this->inn;
     }
 
-    /**
-     * @param string|null $inn
-     */
-    public function setInn(?string $inn): void
+    public function setInn(?string $inn): MoneyTransferOperator
     {
         $this->inn = $inn;
+        return $this;
     }
-
 
     public function jsonSerialize(): array
     {
-        $params = $this->mergeParams([], $this->getPhones(), 'phones');
-        $params = $this->mergeParams($params, $this->getPhones(), 'phones');
-        $params = $this->mergeParams($params, $this->getAddress(), 'address');
-        $params = $this->mergeParams($params, $this->getInn(), 'inn');
-
-
-        return $params;
+        return array_filter(
+            [
+                'phones' => $this->getPhones(),
+                'address' => $this->getAddress(),
+                'inn' => $this->getInn()
+            ]
+        );
     }
     public function isCorrectLength(string $string, int $need):bool
     {

@@ -29,9 +29,4 @@ class AuthTest extends TestCase
             $auth_request->params()['json']->jsonSerialize()
         );
     }
-
-    public function testAuth(): void
-    {
-
-    }
 }

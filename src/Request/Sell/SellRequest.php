@@ -8,11 +8,13 @@ use BusinessGazeta\AtolApi\Response\Sell\SellResponse;
 
 class SellRequest extends AbstractAtolRequest
 {
-    private $query;
+    private SellQuery $query;
+    private string $groupCode;
 
-    public function __construct(SellQuery $sellQuery)
+    public function __construct(SellQuery $sellQuery, string $groupCode)
     {
         $this->query = $sellQuery;
+        $this->groupCode = $groupCode;
     }
 
     public function params(): array
@@ -22,7 +24,7 @@ class SellRequest extends AbstractAtolRequest
 
     public function uri(): string
     {
-        return 'sell';
+        return sprintf('%s/%s', $this->groupCode, 'sell');
     }
 
     public function getResponseObject(): string

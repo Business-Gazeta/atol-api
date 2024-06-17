@@ -25,14 +25,13 @@ class Receipt extends AbstractObject implements JsonSerializable
     )]
     #[Assert\Valid]
     /**
-     * @var Item []
+     * @var Item[] $items
      */
     private array $items;
-    #[Assert\Expression(
-        "value === null || this.isCorrectFloat(value, 100000000)",
-        message: 'Максимальное значение цены – 999999999.99, и 2 знака после запятой',
-    )]
-    private float $total;
+    /**
+     * @var Payment[] $payments
+     */
+    private array $payments;
     #[Assert\Length(
         max: 16,
         maxMessage: 'Максимальная длина строки – 16 символов.',
@@ -55,7 +54,8 @@ class Receipt extends AbstractObject implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
+        return array_filter(
+            [
             'client' => $this->getClient(),
             'company' => $this->getCompany(),
             'total' => $this->getTotal(),
@@ -68,87 +68,8 @@ class Receipt extends AbstractObject implements JsonSerializable
             'cashier' => $this->getCashier(),
             'additional_user_props' => $this->getAdditionalUserProps(),
             'device_number' => $this->getDeviceNumber()
-        ];
-    }
-
-    /**
-     * @return Client
-     */
-    public function getClient(): Client
-    {
-        return $this->client;
-    }
-
-    /**
-     * @param Client $client
-     */
-    public function setClient(Client $client): void
-    {
-        $this->client = $client;
-    }
-
-    /**
-     * @return Company
-     */
-    public function getCompany(): Company
-    {
-        return $this->company;
-    }
-
-    /**
-     * @param Company $company
-     */
-    public function setCompany(Company $company): void
-    {
-        $this->company = $company;
-    }
-
-    /**
-     * @return AgentInfo|null
-     */
-    public function getAgentInfo(): ?AgentInfo
-    {
-        return $this->agentInfo;
-    }
-
-    /**
-     * @param AgentInfo|null $agentInfo
-     */
-    public function setAgentInfo(?AgentInfo $agentInfo): void
-    {
-        $this->agentInfo = $agentInfo;
-    }
-
-    /**
-     * @return SupplierInfo|null
-     */
-    public function getSupplierInfo(): ?SupplierInfo
-    {
-        return $this->supplierInfo;
-    }
-
-    /**
-     * @param SupplierInfo|null $supplierInfo
-     */
-    public function setSupplierInfo(?SupplierInfo $supplierInfo): void
-    {
-        $this->supplierInfo = $supplierInfo;
-    }
-
-    /**
-     * @return array
-     */
-    public function getItems(): array
-    {
-        return $this->items;
-    }
-
-    /**
-     * @param array $items
-     */
-    public function setItems(array $items): void
-    {
-        $this->items = $items;
+        ]
+        );
     }
 
     /**
@@ -156,31 +77,13 @@ class Receipt extends AbstractObject implements JsonSerializable
      */
     public function getPayments(): array
     {
-        $payments = [];
-        foreach ($this->items as $item) {
-            $type = $item->getPaymentMethod()->value;
-            $payments[$type]['type'] = $type;
-            $payments[$type]['sum'][] = $item->getSum();
-        }
-        return array_values(
-            array_map(
-                static function ($item) {
-                    return [
-                        'type' => $item['type'],
-                        'sum' => array_sum($item['sum'])
-                    ];
-                },
-                $payments
-            )
-        );
+        return $this->payments;
     }
 
-    /**
-     * @param array $payments
-     */
-    public function setPayments(array $payments): void
+    public function setPayments(array $payments): Receipt
     {
         $this->payments = $payments;
+        return $this;
     }
 
     /**
@@ -209,14 +112,6 @@ class Receipt extends AbstractObject implements JsonSerializable
     }
 
     /**
-     * @param array|null $vats
-     */
-    public function setVats(?array $vats): void
-    {
-        $this->vats = $vats;
-    }
-
-    /**
      * @return float
      */
     public function getTotal(): float
@@ -231,76 +126,103 @@ class Receipt extends AbstractObject implements JsonSerializable
         );
     }
 
-    /**
-     * @param float $total
-     */
-    public function setTotal(float $total): void
+    public function getClient(): Client
     {
-        $this->total = $total;
+        return $this->client;
     }
 
-    /**
-     * @return string|null
-     */
+    public function setClient(Client $client): Receipt
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+    public function getCompany(): Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(Company $company): Receipt
+    {
+        $this->company = $company;
+        return $this;
+    }
+
+    public function getAgentInfo(): ?AgentInfo
+    {
+        return $this->agentInfo;
+    }
+
+    public function setAgentInfo(?AgentInfo $agentInfo): Receipt
+    {
+        $this->agentInfo = $agentInfo;
+        return $this;
+    }
+
+    public function getSupplierInfo(): ?SupplierInfo
+    {
+        return $this->supplierInfo;
+    }
+
+    public function setSupplierInfo(?SupplierInfo $supplierInfo): Receipt
+    {
+        $this->supplierInfo = $supplierInfo;
+        return $this;
+    }
+
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    public function setItems(array $items): Receipt
+    {
+        $this->items = $items;
+        return $this;
+    }
+
     public function getAdditionalCheckProps(): ?string
     {
         return $this->additionalCheckProps;
     }
 
-    /**
-     * @param string|null $additionalCheckProps
-     */
-    public function setAdditionalCheckProps(?string $additionalCheckProps): void
+    public function setAdditionalCheckProps(?string $additionalCheckProps): Receipt
     {
         $this->additionalCheckProps = $additionalCheckProps;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCashier(): ?string
     {
         return $this->cashier;
     }
 
-    /**
-     * @param string|null $cashier
-     */
-    public function setCashier(?string $cashier): void
+    public function setCashier(?string $cashier): Receipt
     {
         $this->cashier = $cashier;
+        return $this;
     }
 
-    /**
-     * @return AdditionalUserProps|null
-     */
     public function getAdditionalUserProps(): ?AdditionalUserProps
     {
         return $this->additionalUserProps;
     }
 
-    /**
-     * @param AdditionalUserProps|null $additionalUserProps
-     */
-    public function setAdditionalUserProps(?AdditionalUserProps $additionalUserProps): void
+    public function setAdditionalUserProps(?AdditionalUserProps $additionalUserProps): Receipt
     {
         $this->additionalUserProps = $additionalUserProps;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDeviceNumber(): ?string
     {
         return $this->deviceNumber;
     }
 
-    /**
-     * @param string|null $deviceNumber
-     */
-    public function setDeviceNumber(?string $deviceNumber): void
+    public function setDeviceNumber(?string $deviceNumber): Receipt
     {
         $this->deviceNumber = $deviceNumber;
+        return $this;
     }
 
     public function isCorrectFloat(float $k, int $max, int $decimals = 2): bool

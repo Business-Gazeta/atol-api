@@ -2,9 +2,9 @@
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
+use BusinessGazeta\AtolApi\Enum\Sell\VatTypeEnum;
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
-use BusinessGazeta\AtolApi\Enum\Sell\VatTypeEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -57,9 +57,12 @@ class Vat extends AbstractObject implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        $params = $this->mergeParams([], $this->getType()?->value, 'type');
-        $params = $this->mergeParams($params, $this->getSum(), 'sum');
-        return $params;
+        return array_filter(
+            [
+                'type' => $this->getType(),
+                'sum' => $this->getSum()
+            ]
+        );
     }
 
     public function isCorrectFloat(float $k, int $max, int $decimals = 2): bool

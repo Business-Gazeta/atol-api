@@ -2,10 +2,10 @@
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
-use BusinessGazeta\AtolApi\Object\AbstractObject;
-use JsonSerializable;
 use BusinessGazeta\AtolApi\Enum\Sell\PaymentMethodEnum;
 use BusinessGazeta\AtolApi\Enum\Sell\PaymentObjectEnum;
+use BusinessGazeta\AtolApi\Object\AbstractObject;
+use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Item extends AbstractObject implements JsonSerializable
@@ -25,11 +25,6 @@ class Item extends AbstractObject implements JsonSerializable
         message: 'Максимальное значение – 99 999.999 и 3 знака после запятой',
     )]
     private float $quantity;
-    #[Assert\Expression(
-        "value === null || this.isCorrectFloat(value, 42949673)",
-        message: 'Максимальное значение цены – 42 949 672.95 и 2 знака после запятой',
-    )]
-    private float $sum;
     #[Assert\Length(
         max: 16,
         maxMessage: 'Максимальная длина строки – 16 символов.',
@@ -76,23 +71,25 @@ class Item extends AbstractObject implements JsonSerializable
     public function jsonSerialize(): array
     {
         return
-            [
-                'name' => $this->getName(),
-                'price' => $this->getPrice(),
-                'quantity' => $this->getQuantity(),
-                'sum' => $this->getSum(),
-                'vat' => $this->getVat(),
-                'measurement_unit' => $this->getMeasurementUnit(),
-                'payment_method' => $this->getPaymentMethod(),
-                'payment_object' => $this->getPaymentObject(),
-                'nomenclature_code' => $this->getNomenclatureCode(),
-                'agent_info' => $this->getAgentInfo(),
-                'supplier_info' => $this->getSupplierInfo(),
-                'user_data' => $this->getUserData(),
-                'excise' => $this->getExcise(),
-                'country_code' => $this->getCountryCode(),
-                'declaration_number' => $this->getDeclarationNumber()
-            ];
+            array_filter(
+                [
+                    'name' => $this->getName(),
+                    'price' => $this->getPrice(),
+                    'quantity' => $this->getQuantity(),
+                    'sum' => $this->getSum(),
+                    'vat' => ['type' => $this->getVat()->getType()],
+                    'measurement_unit' => $this->getMeasurementUnit(),
+                    'payment_method' => $this->getPaymentMethod(),
+                    'payment_object' => $this->getPaymentObject(),
+                    'nomenclature_code' => $this->getNomenclatureCode(),
+                    'agent_info' => $this->getAgentInfo(),
+                    'supplier_info' => $this->getSupplierInfo(),
+                    'user_data' => $this->getUserData(),
+                    'excise' => $this->getExcise(),
+                    'country_code' => $this->getCountryCode(),
+                    'declaration_number' => $this->getDeclarationNumber()
+                ]
+            );
     }
 
     public function getName(): string
@@ -131,12 +128,6 @@ class Item extends AbstractObject implements JsonSerializable
     public function getSum(): float
     {
         return $this->getPrice() * $this->getQuantity();
-    }
-
-    public function setSum(float $sum): Item
-    {
-        $this->sum = $sum;
-        return $this;
     }
 
     public function getMeasurementUnit(): ?string

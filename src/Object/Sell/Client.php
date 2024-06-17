@@ -85,12 +85,14 @@ class Client extends AbstractObject implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
-            'email' => $this->getEmail(),
-            'phone' => $this->getPhone(),
-            'name' => $this->getName(),
-            'inn' => $this->getInn()
-        ];
+        return array_filter(
+            [
+                'email' => $this->getEmail(),
+                'phone' => $this->getPhone(),
+                'name' => $this->getName(),
+                'inn' => $this->getInn()
+            ]
+        );
     }
 
     public function isCorrectLength(string $string, int $need): bool

@@ -1,10 +1,10 @@
 <?php
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
-use Symfony\Component\Validator\Constraints as Assert;
 
 use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 class Service extends AbstractObject implements JsonSerializable
@@ -15,24 +15,21 @@ zA-Z0-9а-яА-Я\-\.\?\,\'\/\\\+&=%\$#_]*)?$")]
 
     public function jsonSerialize(): array
     {
-        return [
-            'callback_url' => $this->getCallbackUrl()
-        ];
+        return array_filter(
+            [
+                'callback_url' => $this->getCallbackUrl()
+            ]
+        );
     }
 
-    /**
-     * @return string|null
-     */
     public function getCallbackUrl(): ?string
     {
         return $this->callbackUrl;
     }
 
-    /**
-     * @param string|null $callbackUrl
-     */
-    public function setCallbackUrl(?string $callbackUrl): void
+    public function setCallbackUrl(?string $callbackUrl): Service
     {
         $this->callbackUrl = $callbackUrl;
+        return $this;
     }
 }

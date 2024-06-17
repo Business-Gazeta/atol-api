@@ -20,12 +20,14 @@ class AgentInfo extends AbstractObject implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
-            'type' => $this->getType()->value,
-            'paying_agent' => $this->getPayingAgent(),
-            'receive_payments_operator' => $this->getReceivePaymentsOperator(),
-            'money_transfer_operator' => $this->getMoneyTransferOperator()
-        ];
+        return array_filter(
+            [
+                'type' => $this->getType()->value,
+                'paying_agent' => $this->getPayingAgent(),
+                'receive_payments_operator' => $this->getReceivePaymentsOperator(),
+                'money_transfer_operator' => $this->getMoneyTransferOperator()
+            ]
+        );
     }
 
 

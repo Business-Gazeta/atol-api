@@ -2,8 +2,8 @@
 
 namespace BusinessGazeta\AtolApi\Object\Sell;
 
-use BusinessGazeta\AtolApi\Object\AbstractObject;
 use BusinessGazeta\AtolApi\Enum\Sell\CompanySnoEnum;
+use BusinessGazeta\AtolApi\Object\AbstractObject;
 use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -25,8 +25,9 @@ class Company extends AbstractObject implements JsonSerializable
     )]
     private string $inn;
     #[Assert\Length(
+        min: 0,
         max: 256,
-        maxMessage: 'Платежный адресс может быть больше чем {{ limit }} символов',
+        maxMessage: 'Платежный адрес может быть больше чем {{ limit }} символов',
     )]
     private string $paymentAddress;
     #[Assert\Length(
@@ -94,13 +95,15 @@ class Company extends AbstractObject implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
-            'email' => $this->getEmail(),
-            'inn' => $this->getInn(),
-            'payment_address' => $this->getPaymentAddress(),
-            'sno' => $this->getSno()?->value,
-            'location' => $this->getLocation()
-        ];
+        return array_filter(
+            [
+                'email' => $this->getEmail(),
+                'inn' => $this->getInn(),
+                'payment_address' => $this->getPaymentAddress(),
+                'sno' => $this->getSno()?->value,
+                'location' => $this->getLocation()
+            ]
+        );
     }
 
     public function isCorrectLength(string $string, int $need): bool

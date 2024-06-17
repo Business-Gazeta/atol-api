@@ -7,7 +7,6 @@ use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
-
 class AdditionalUserProps extends AbstractObject implements JsonSerializable
 {
     #[Assert\Length(
@@ -23,10 +22,12 @@ class AdditionalUserProps extends AbstractObject implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
-            'name' => $this->getName(),
-            'value' => $this->getValue()
-        ];
+        return array_filter(
+            [
+                'name' => $this->getName(),
+                'value' => $this->getValue()
+            ]
+        );
     }
 
     /**
