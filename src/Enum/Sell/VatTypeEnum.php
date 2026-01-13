@@ -52,4 +52,5 @@ enum   VatTypeEnum: string
      * НДС по расчетной ставке 20/120%
      */
     case VAT_120 = 'vat120';
+    case VAT_122 = 'vat122';
 }
